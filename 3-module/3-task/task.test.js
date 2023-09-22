@@ -1,4 +1,4 @@
-fdescribe("3-module-3-task", () => {
+describe("3-module-3-task", () => {
   it("должна оставить пустую строку без изменений ", () => {
     expect(camelize("")).toBe("");
   });
