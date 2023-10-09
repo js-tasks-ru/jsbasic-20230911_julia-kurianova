@@ -11,6 +11,22 @@ export default class Carousel {
 
   #render() {
     this.elem = createElement(this.#templateSlide());
+
+    const btns = this.elem.querySelectorAll(".carousel__button");
+    btns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const cardId = e.target.closest(".carousel__slide").dataset.id;
+        this.#onAddClick(cardId);
+      });
+    });
+  }
+
+  #onAddClick(id) {
+    const e = new CustomEvent("product-add", {
+      bubbles: true,
+      detail: id,
+    });
+    this.elem.dispatchEvent(e);
   }
 
   #templateSlide() {
