@@ -11,6 +11,7 @@ export default class Carousel {
 
   #render() {
     this.elem = createElement(this.#templateSlide());
+    this.#initCarousel();
 
     const btns = this.elem.querySelectorAll(".carousel__button");
     btns.forEach((btn) => {
@@ -27,6 +28,51 @@ export default class Carousel {
       detail: id,
     });
     this.elem.dispatchEvent(e);
+  }
+
+  #initCarousel() {
+    const carouselInner = this.elem.querySelector(".carousel__inner");
+    const btnRight = this.elem.querySelector(".carousel__arrow_right");
+    const btnLeft = this.elem.querySelector(".carousel__arrow_left");
+    const slides = Array.from(this.elem.querySelectorAll(".carousel__slide"));
+
+    let slideWidth;
+    let currentSlideNum = 1;
+
+    //initial left arrow state
+    if (currentSlideNum === 1) {
+      btnLeft.style.display = "none";
+    }
+
+    btnRight.addEventListener("click", () => {
+      // calculate slide width on first load
+      if (!slideWidth)
+        slideWidth = this.elem.querySelector(".carousel__img").width;
+
+      btnLeft.style.display = "flex";
+      carouselInner.style.transform = `translateX(-${
+        slideWidth * currentSlideNum
+      }px)`;
+      currentSlideNum++;
+
+      // if current slide is the last slide
+      if (currentSlideNum === slides.length) {
+        btnRight.style.display = "none";
+      }
+    });
+
+    btnLeft.addEventListener("click", () => {
+      currentSlideNum--;
+      carouselInner.style.transform = `translateX(-${
+        slideWidth * currentSlideNum - slideWidth
+      }px)`;
+
+      // if current slide is the first slide
+      if (currentSlideNum === 1) {
+        btnLeft.style.display = "none";
+        btnRight.style.display = "flex";
+      }
+    });
   }
 
   #templateSlide() {
