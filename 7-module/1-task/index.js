@@ -12,6 +12,7 @@ export default class RibbonMenu {
   #render() {
     this.elem = createElement(this.#template());
     this.#onScrollMenu();
+    this.#onMenuItemClick();
   }
 
   #onScrollMenu() {
@@ -47,6 +48,37 @@ export default class RibbonMenu {
           rightArrow.classList.remove("ribbon__arrow_visible");
       });
     });
+  }
+
+  #onMenuItemClick() {
+    const ribbonInner = this.elem.querySelector(".ribbon__inner");
+
+    // first menuItem active by default
+    const itemActive = this.elem.querySelector(".ribbon__item");
+    itemActive.classList.add("ribbon__item_active");
+
+    ribbonInner.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const item = e.target.closest(".ribbon__item");
+      const id = e.target.closest(".ribbon__item").dataset.id;
+      const text = e.target.closest(".ribbon__item").innerText;
+
+      if (id === text) {
+        item.classList.add("ribbon__item_active");
+      }
+
+      itemActive.classList.remove("ribbon__item_active");
+      this.#onSelectMenuItem(id);
+    });
+  }
+
+  #onSelectMenuItem(id) {
+    const e = new CustomEvent("ribbon-select", {
+      detail: id,
+      bubbles: true,
+    });
+    this.elem.dispatchEvent(e);
   }
 
   #template() {
