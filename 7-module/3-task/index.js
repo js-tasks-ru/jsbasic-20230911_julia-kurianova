@@ -66,5 +66,3 @@ export default class StepSlider {
     </div>`;
   }
 }
-
-// class="slider__step-active"
