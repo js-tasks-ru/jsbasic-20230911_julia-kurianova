@@ -47,7 +47,7 @@ export default class CartIcon {
     let isMobile = document.documentElement.clientWidth <= 767;
     const cartIcon = document.querySelector(".cart-icon");
 
-    if (cartIcon.getBoundingClientRect().top < 0) {
+    if (cartIcon && cartIcon.getBoundingClientRect().top < 0) {
       let leftIndent =
         Math.min(
           document.querySelector(".container").getBoundingClientRect().right +
