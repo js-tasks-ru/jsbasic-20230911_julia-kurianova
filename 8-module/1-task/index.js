@@ -46,13 +46,15 @@ export default class CartIcon {
   updatePosition() {
     let isMobile = document.documentElement.clientWidth <= 767;
     const cartIcon = document.querySelector(".cart-icon");
-    let leftIndent =
-      Math.min(
-        document.querySelector(".container").getBoundingClientRect().right + 20,
-        document.documentElement.clientWidth - this.elem.offsetWidth - 10
-      ) + "px";
 
     if (cartIcon.getBoundingClientRect().top < 0) {
+      let leftIndent =
+        Math.min(
+          document.querySelector(".container").getBoundingClientRect().right +
+            20,
+          document.documentElement.clientWidth - this.elem.offsetWidth - 10
+        ) + "px";
+
       Object.assign(this.elem.style, {
         position: "fixed",
         top: "50px",
