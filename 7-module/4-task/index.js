@@ -2,12 +2,12 @@ import createElement from "../../assets/lib/create-element.js";
 
 export default class StepSlider {
   elem = null;
-  #steps = 5;
-  #value = 0;
+  steps = 5;
+  value = 0;
 
   constructor({ steps, value = 0 }) {
-    this.#steps = steps;
-    this.#value = value;
+    this.steps = steps || this.steps;
+    this.value = value;
     this.#render();
   }
 
@@ -34,14 +34,14 @@ export default class StepSlider {
     let left = e.clientX - this.elem.getBoundingClientRect().left;
     let leftRelative = left / this.elem.offsetWidth;
 
-    let segments = this.#steps - 1;
+    let segments = this.steps - 1;
     let approximateValue = Math.round(leftRelative * segments);
-    if (approximateValue >= this.#steps) approximateValue = this.#steps - 1;
+    if (approximateValue >= this.steps) approximateValue = this.steps - 1;
     if (approximateValue <= 0) approximateValue = 0;
 
     let valuePercents = (approximateValue / segments) * 100;
 
-    this.#value = approximateValue;
+    this.value = approximateValue;
     value.innerText = approximateValue;
 
     thumb.style.left = `${valuePercents}%`;
@@ -73,15 +73,15 @@ export default class StepSlider {
     }
 
     let leftRelative = left / this.elem.offsetWidth;
-    let segments = this.#steps - 1;
+    let segments = this.steps - 1;
     let approximateValue = Math.round(leftRelative * segments);
 
-    if (approximateValue >= this.#steps) approximateValue = this.#steps - 1;
+    if (approximateValue >= this.steps) approximateValue = this.steps - 1;
     if (approximateValue <= 0) approximateValue = 0;
 
     let valuePercents = leftRelative * 100;
 
-    this.#value = approximateValue;
+    this.value = approximateValue;
     value.innerText = approximateValue;
 
     thumb.style.left = `${valuePercents}%`;
@@ -98,13 +98,13 @@ export default class StepSlider {
       if (span.classList.contains("slider__step-active")) {
         span.classList.remove("slider__step-active");
       }
-      if (index === this.#value) {
+      if (index === this.value) {
         span.classList.add("slider__step-active");
       }
     });
 
-    thumb.style.left = `${(this.#value / (this.#steps - 1)) * 100}%`;
-    progress.style.width = `${(this.#value / (this.#steps - 1)) * 100}%`;
+    thumb.style.left = `${(this.value / (this.steps - 1)) * 100}%`;
+    progress.style.width = `${(this.value / (this.steps - 1)) * 100}%`;
 
     this.elem.classList.remove("slider_dragging");
     document.removeEventListener("pointermove", this.#onPointerMove);
@@ -114,7 +114,7 @@ export default class StepSlider {
   #changeValue = () => {
     this.elem.dispatchEvent(
       new CustomEvent("slider-change", {
-        detail: this.#value,
+        detail: this.value,
         bubbles: true,
       })
     );
@@ -126,7 +126,7 @@ export default class StepSlider {
   
       <!--Ползунок слайдера с активным значением-->
       <div class="slider__thumb" style="left: 0%;">
-        <span class="slider__value">${this.#value}</span>
+        <span class="slider__value">${this.value}</span>
       </div>
   
       <!--Заполненная часть слайдера-->
@@ -134,7 +134,7 @@ export default class StepSlider {
   
       <!--Шаги слайдера-->
       <div class="slider__steps">
-        ${"<span></span>\n".repeat(this.#steps)}
+        ${"<span></span>\n".repeat(this.steps)}
       </div>
     </div>`;
   }
