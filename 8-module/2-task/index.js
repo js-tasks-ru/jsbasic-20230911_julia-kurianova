@@ -18,19 +18,19 @@ export default class ProductGrid {
     const grid = this.elem.querySelector(".products-grid__inner");
     grid.innerHTML = "";
 
-    const filteredProducts = this.products.filter((product) => {
-      return !(
-        (this.filters.noNuts && product.nuts) ||
-        (this.filters.vegeterianOnly && !product.vegeterian) ||
-        (this.filters.maxSpiciness !== 0 &&
-          product.spiciness > this.filters.maxSpiciness) ||
-        (this.filters.category && product.category != this.filters.category)
-      );
-    });
-
-    filteredProducts.forEach((product) => {
-      grid.append(new ProductCard(product).elem);
-    });
+    this.products
+      .filter((product) => {
+        return !(
+          (this.filters.noNuts && product.nuts) ||
+          (this.filters.vegeterianOnly && !product.vegeterian) ||
+          (this.filters.maxSpiciness !== 0 &&
+            product.spiciness > this.filters.maxSpiciness) ||
+          (this.filters.category && product.category != this.filters.category)
+        );
+      })
+      .forEach((product) => {
+        grid.append(new ProductCard(product).elem);
+      });
   }
 
   #cardTemplate() {

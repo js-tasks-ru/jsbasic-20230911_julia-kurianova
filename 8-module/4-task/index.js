@@ -7,6 +7,7 @@ export default class Cart {
 
   constructor(cartIcon) {
     this.cartIcon = cartIcon;
+    this.modal = new Modal();
 
     this.addEventListeners();
   }
@@ -106,23 +107,24 @@ export default class Cart {
   }
 
   renderModal() {
-    const modal = new Modal();
+    this.modal.setTitle("Your order");
 
     const cartItemsNode = this.cartItems.map((item) => {
       const { product, count } = item;
       return this.renderProduct(product, count);
     });
 
-    modal.setTitle("Your order");
+    // create one node from two: all selected items + form
+    const modalBodyNode = createElement("<div></div>");
     cartItemsNode.forEach((node) => {
-      modal.setBody(node);
+      modalBodyNode.append(node);
     });
-    modal.setBody(this.renderOrderForm());
-    modal.open();
+    modalBodyNode.append(this.renderOrderForm());
 
-    const modalBody = modal.elem.querySelector(".modal__body");
+    this.modal.setBody(modalBodyNode);
+    this.modal.open();
 
-    modalBody.addEventListener("click", (e) => {
+    this.modal.elem.addEventListener("click", (e) => {
       const btnCounterMinus = e.target.closest(".cart-counter__button_minus");
       const btnCounterPlus = e.target.closest(".cart-counter__button_plus");
       if (btnCounterMinus) {
@@ -143,22 +145,21 @@ export default class Cart {
 
   onProductUpdate(cartItem) {
     if (document.body.classList.contains("is-modal-open")) {
-      const modal = document.body.querySelector(".modal");
-      const modalBody = document.body.querySelector(".modal__body");
-
-      let productElem = modalBody.querySelector(
+      let productElem = this.modal.elem.querySelector(
         `[data-product-id="${cartItem.product.id}"].cart-product`
       );
       // Элемент, который хранит количество товаров с таким productId в корзине
-      let productCount = modalBody.querySelector(
+      let productCount = this.modal.elem.querySelector(
         `[data-product-id="${cartItem.product.id}"] .cart-counter__count`
       );
       // Элемент с общей стоимостью всех единиц этого товара
-      let productPrice = modalBody.querySelector(
+      let productPrice = this.modal.elem.querySelector(
         `[data-product-id="${cartItem.product.id}"] .cart-product__price`
       );
       // Элемент с суммарной стоимостью всех товаров
-      let infoPrice = modalBody.querySelector(`.cart-buttons__info-price`);
+      let infoPrice = this.modal.elem.querySelector(
+        `.cart-buttons__info-price`
+      );
 
       // remove element if it has count: 0
       if (!cartItem.count) {
@@ -167,8 +168,8 @@ export default class Cart {
 
       // close modal if cart is empty
       if (this.isEmpty()) {
-        document.body.classList.remove("is-modal-open");
-        modal.remove();
+        // document.body.classList.remove("is-modal-open");
+        this.modal.close();
       }
 
       // update coun in cart, total price for item, and total price for order
@@ -184,11 +185,8 @@ export default class Cart {
 
   onSubmit(event) {
     event.preventDefault();
-    const modal = document.body.querySelector(".modal");
-    const modalTitle = modal.querySelector(".modal__title");
-    const modalBody = modal.querySelector(".modal__body");
-    const form = modal.querySelector(".cart-form");
-    const submit = modal.querySelector("button[type='submit']");
+    const form = this.modal.elem.querySelector(".cart-form");
+    const submit = this.modal.elem.querySelector("button[type='submit']");
     submit.classList.add("is-loading");
     const formData = new FormData(form);
 
@@ -198,14 +196,16 @@ export default class Cart {
     })
       .then(() => {
         submit.classList.remove("is-loading");
-        modalTitle.innerText = "Success!";
-        modalBody.innerHTML = `
+        this.modal.setTitle("Success!");
+        this.modal.setBody(
+          createElement(`
         <div class="modal__body-inner">
           <p>Order successful! Your order is being cooked :) <br>
             We’ll notify you about delivery time shortly.<br>
             <img src="/assets/images/delivery.gif">
           </p>
-        </div>`;
+        </div>`)
+        );
         this.cartItems = [];
         this.cartIcon.update(this);
       })
