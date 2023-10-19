@@ -19,7 +19,7 @@ export default class Modal {
   }
 
   setBody(body) {
-    this.elem.querySelector(".modal__body").append(body);
+    this.elem.querySelector(".modal__body").replaceChildren(body);
   }
 
   open() {
@@ -29,9 +29,7 @@ export default class Modal {
 
   close() {
     document.body.classList.remove("is-modal-open");
-    const modal = document.body.querySelector(".modal");
-    if (modal) modal.remove();
-
+    if (this.elem) this.elem.remove();
     document.removeEventListener("keydown", this.#onCloseEsc);
   }
 
